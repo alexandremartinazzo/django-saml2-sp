@@ -1,7 +1,11 @@
 import os
 
+import saml2
+from saml2.saml import NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED
+from saml2.sigver import get_xmlsec_binary
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = 'jp+hvkp_$@(774h6=zljw1kd+els6q!u8@1agj!=%h*7vt&t=y'
+SECRET_KEY = 'not_so_secret_key_for_SP'
 
 DEBUG = True
 
@@ -17,14 +21,14 @@ INSTALLED_APPS = [
     'djangosaml2',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'sp.urls'
@@ -32,7 +36,7 @@ ROOT_URLCONF = 'sp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'),],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -54,6 +58,22 @@ DATABASES = {
     }
 }
 
+LOGGING = {
+  'version': 1,
+  'disable_existing_loggers': False,
+  'handlers': {
+    'console': {
+      'class': 'logging.StreamHandler',
+    },
+  },
+  'loggers': {
+    '': {
+      'handlers': ['console'],
+      'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+    },
+  },
+}
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -62,11 +82,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# SAML2 SP settings
-
-import saml2
-from saml2.saml import NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED
-from saml2.sigver import get_xmlsec_binary
+##############################################################################
+# SAML2 Service Provider settings
 
 SESSION_COOKIE_NAME = 'sessionid_sp'
 
@@ -80,13 +97,13 @@ AUTHENTICATION_BACKENDS = (
 SAML_BASE_URL = 'http://localhost:9000/saml2'
 
 SAML_CONFIG = {
-    'debug' : DEBUG,
+    'debug': DEBUG,
     'xmlsec_binary': get_xmlsec_binary(['/usr/bin/xmlsec1']),
     'entityid': '{}/metadata'.format(SAML_BASE_URL),
 
     'service': {
         'sp': {
-            'name': 'Django SAML2 SP',
+            'name': 'Django2 SAML2 SP',
             'endpoints': {
                 'assertion_consumer_service': [
                     ('{}/acs/'.format(SAML_BASE_URL), saml2.BINDING_HTTP_POST)
