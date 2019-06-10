@@ -1,0 +1,14 @@
+<h1>SAML2 Service Provider</h1>
+
+<p>POST content by <b>{{ user }}</b>:</p>
+<pre>{% for key, value in post_dict.items %}
+{{ key }}: {{ value|default:"''" }}
+{% endfor %}
+</pre>
+---
+<p>Request headers:</p>
+<pre>{% for key, value in request.headers.items %}
+{{ key }}: {{ value|default:"''" }}
+{% endfor %}
+
+</pre>
