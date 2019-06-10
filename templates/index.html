@@ -14,3 +14,5 @@
 {% else %}
     <a href="/saml2/login/?next=/">Login</a>
 {% endif %}
+
+<p>This is a <a href="{% url 'protected' %}">protected URL</a>.</p>
