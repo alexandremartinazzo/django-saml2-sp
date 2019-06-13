@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 from django.urls import include, path
 
-from sp.views import EndPoint
+from sp.views import EndPoint, DirectPost
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
@@ -16,4 +16,5 @@ urlpatterns = [
     ),
     path('admin/', admin.site.urls),
     path('endpoint/', EndPoint.as_view(), name='endpoint'),
+    path('endpoint/direct/', DirectPost.as_view(), name='endpoint_direct'),
 ]
